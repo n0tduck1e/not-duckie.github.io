@@ -1,19 +1,1046 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width,initial-scale=1.0">
-		<meta name="description" content="Welcome to our Jatayu Cloud, where we're all about making the cloud easy and accessible for everyone! 🌥️💻">
-		<link rel="icon" href="/images/favicon.ico">
-		<title>Harbinger</title>
-		<script type="module" crossorigin src="/assets/index-7mL7nCfv.js"></script>
-		<link rel="stylesheet" crossorigin href="/assets/index-SYnxJJxH.css">
-	</head>
-	<body>
-		<div id="app"></div>
-		<noscript>
-			<strong>We're sorry but Harbinger doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
-		</noscript>
-	</body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harbinger : Non-Human Identity Security</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='50,5 95,27.5 95,72.5 50,95 5,72.5 5,27.5' fill='%2300d4aa'/></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0a0a0f;
+            --bg-elevated: #12121a;
+            --bg-card: #16161f;
+            --border: #1e1e2e;
+            --border-hover: #2a2a3e;
+            --text: #e4e4ef;
+            --text-muted: #6b6b80;
+            --text-dim: #44445a;
+            --accent: #00d4aa;
+            --accent-dim: #00d4aa20;
+            --accent-glow: #00d4aa40;
+            --danger: #ff4757;
+            --danger-dim: #ff475720;
+            --warning: #ffa502;
+            --warning-dim: #ffa50220;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Space Grotesk', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* ── Grid Background ── */
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(var(--border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 60px 60px;
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ── Glow Orbs ── */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(120px);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .orb-1 {
+            width: 500px;
+            height: 500px;
+            background: var(--accent);
+            opacity: 0.04;
+            top: -100px;
+            right: -100px;
+        }
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: #6c5ce7;
+            opacity: 0.03;
+            bottom: 20%;
+            left: -100px;
+        }
+
+        /* ── Navigation ── */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(20px);
+            background: rgba(10, 10, 15, 0.8);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .logo-mark {
+            width: 28px;
+            height: 28px;
+            background: var(--accent);
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--bg);
+        }
+
+        .btn-primary:hover {
+            background: #00eabb;
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--border-hover);
+            color: var(--text);
+        }
+
+        /* ── Sections ── */
+        section {
+            position: relative;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* ── Hero ── */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding-top: 5rem;
+        }
+
+        .hero-content {
+            max-width: 800px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.35rem 0.8rem;
+            background: var(--accent-dim);
+            border: 1px solid var(--accent);
+            border-radius: 100px;
+            font-size: 0.75rem;
+            color: var(--accent);
+            margin-bottom: 2rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .hero-badge .dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 700;
+            line-height: 1.05;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero h1 .highlight {
+            background: linear-gradient(135deg, var(--accent), #00b894);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            max-width: 560px;
+            margin-bottom: 2.5rem;
+            line-height: 1.7;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 3rem;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            margin-top: 0.25rem;
+        }
+
+        /* ── Terminal Section ── */
+        .terminal-section {
+            padding: 6rem 0;
+        }
+
+        .terminal-window {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1rem;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .terminal-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--text-dim);
+        }
+
+        .terminal-dot:nth-child(1) { background: #ff5f57; }
+        .terminal-dot:nth-child(2) { background: #febc2e; }
+        .terminal-dot:nth-child(3) { background: #28c840; }
+
+        .terminal-title {
+            margin-left: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .terminal-body {
+            padding: 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.8;
+            overflow-x: auto;
+        }
+
+        .terminal-body .prompt {
+            color: var(--accent);
+        }
+
+        .terminal-body .output {
+            color: var(--text-muted);
+        }
+
+        .terminal-body .danger {
+            color: var(--danger);
+        }
+
+        .terminal-body .warning {
+            color: var(--warning);
+        }
+
+        .terminal-body .success {
+            color: var(--accent);
+        }
+
+        .terminal-body .comment {
+            color: var(--text-dim);
+        }
+
+        .terminal-line {
+            display: block;
+        }
+
+        /* ── Problem Section ── */
+        .problem-section {
+            padding: 8rem 0;
+        }
+
+        .section-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .section-title {
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+        }
+
+        .section-desc {
+            color: var(--text-muted);
+            max-width: 600px;
+            margin-bottom: 4rem;
+            font-size: 1.05rem;
+        }
+
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .problem-card {
+            padding: 1.5rem;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            transition: border-color 0.3s;
+        }
+
+        .problem-card:hover {
+            border-color: var(--danger);
+        }
+
+        .problem-icon {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--danger-dim);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .problem-card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .problem-card p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .problem-stat {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--danger);
+            margin-top: 0.75rem;
+        }
+
+        /* ── Solution Section ── */
+        .solution-section {
+            padding: 8rem 0;
+            background: var(--bg-elevated);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .solution-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .solution-visual {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .arch-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .arch-node {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.8rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+
+        .arch-node .node-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .arch-node.agent .node-icon { background: var(--accent-dim); }
+        .arch-node.edge .node-icon { background: #6c5ce720; color: #a29bfe; }
+        .arch-node.vault .node-icon { background: var(--warning-dim); }
+        .arch-node.target .node-icon { background: var(--danger-dim); }
+
+        .arch-arrow {
+            display: flex;
+            justify-content: center;
+            color: var(--text-dim);
+            font-size: 0.8rem;
+        }
+
+        .features-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .feature-item {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .feature-check {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--accent-dim);
+            color: var(--accent);
+            border-radius: 50%;
+            flex-shrink: 0;
+            font-size: 0.75rem;
+            margin-top: 0.15rem;
+        }
+
+        .feature-item h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+
+        .feature-item p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* ── How It Works ── */
+        .how-section {
+            padding: 8rem 0;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+
+        .step {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            position: relative;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-elevated);
+            border: 2px solid var(--border);
+            border-radius: 50%;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin: 0 auto 1rem;
+        }
+
+        .step h3 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .step p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .step-connector {
+            position: absolute;
+            top: 2rem;
+            right: -0.5rem;
+            color: var(--text-dim);
+        }
+
+        /* ── CTA Section ── */
+        .cta-section {
+            padding: 8rem 0;
+        }
+
+        .cta-box {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 4rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        }
+
+        .cta-box h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .cta-box p {
+            color: var(--text-muted);
+            max-width: 500px;
+            margin: 0 auto 2rem;
+        }
+
+        .waitlist-form {
+            display: flex;
+            gap: 0.75rem;
+            max-width: 450px;
+            margin: 0 auto;
+        }
+
+        .waitlist-form input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .waitlist-form input:focus {
+            border-color: var(--accent);
+        }
+
+        .waitlist-form input::placeholder {
+            color: var(--text-dim);
+        }
+
+        /* ── Footer ── */
+        footer {
+            padding: 3rem 0;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        footer p {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hero-stats { flex-direction: column; gap: 1.5rem; }
+            .problem-grid { grid-template-columns: 1fr; }
+            .solution-grid { grid-template-columns: 1fr; }
+            .steps { grid-template-columns: 1fr; }
+            .step-connector { display: none; }
+            .waitlist-form { flex-direction: column; }
+            .cta-box { padding: 2rem; }
+            .policy-visual { font-size: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-bg"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
+    <nav>
+        <div class="logo">
+            <div class="logo-mark"></div>
+            <span>harbinger</span>
+        </div>
+        <div class="nav-links">
+            <a href="#problem">Problem</a>
+            <a href="#solution">Solution</a>
+            <a href="#policy">Policy Engine</a>
+            <a href="#how">How it works</a>
+            <a href="#waitlist" class="btn btn-primary">Join Waitlist</a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span class="dot"></span>
+                    <span>now accepting early access signups</span>
+                </div>
+                <h1>
+                    Non-Human Identities.<br>
+                    <span class="highlight">Human-Grade Control.</span>
+                </h1>
+                <p>
+                    Every agent, bot, and service account gets a scoped token. Harbinger enforces exactly what each agent can do, nothing more, nothing less. AI analyzes usage patterns and automatically generates the least-privilege policy for each agent.
+                </p>
+                <div class="hero-actions">
+                    <a href="#waitlist" class="btn btn-primary">Request Early Access →</a>
+                    <a href="#how" class="btn btn-ghost">See how it works</a>
+                </div>
+                <div class="hero-stats">
+                    <div>
+                        <div class="stat-value mono">144:1</div>
+                        <div class="stat-label">NHIs per human in enterprises</div>
+                    </div>
+                    <div>
+                        <div class="stat-value mono">0</div>
+                        <div class="stat-label">policies per agent (avg)</div>
+                    </div>
+                    <div>
+                        <div class="stat-value mono">0</div>
+                        <div class="stat-label">tools for Indian SMEs</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Terminal Demo -->
+    <section class="terminal-section">
+        <div class="container">
+            <div class="terminal-window">
+                <div class="terminal-header">
+                    <div class="terminal-dot"></div>
+                    <div class="terminal-dot"></div>
+                    <div class="terminal-dot"></div>
+                    <span class="terminal-title">harbinger agents --github myorg --aws production</span>
+                </div>
+                <div class="terminal-body">
+                    <span class="terminal-line"><span class="prompt">→</span> <span class="output">Discovering agents and NHIs...</span></span>
+                    <span class="terminal-line">&nbsp;</span>
+                    <span class="terminal-line"><span class="comment">  ── Registered Agents ─────────────────────</span></span>
+                    <span class="terminal-line"><span class="success">  deploy-bot</span>      <span class="output">github:read, github:write      </span><span class="success">● active</span></span>
+                    <span class="terminal-line"><span class="success">  ci-runner</span>       <span class="output">github:read, aws:s3:get         </span><span class="success">● active</span></span>
+                    <span class="terminal-line"><span class="warning">  data-pipeline</span>   <span class="output">aws:s3:*, aws:ec2:*             </span><span class="warning">● overprivileged</span></span>
+                    <span class="terminal-line"><span class="danger">  legacy-deploy</span>   <span class="output">AdministratorAccess             </span><span class="danger">● orphaned</span></span>
+                    <span class="terminal-line">&nbsp;</span>
+                    <span class="terminal-line"><span class="comment">  ── AI Policy Generation ──────────────────</span></span>
+                    <span class="terminal-line"><span class="output">  Analyzing usage patterns for </span><span class="warning">deploy-bot</span><span class="output">...</span></span>
+                    <span class="terminal-line"><span class="success">  ✓ auto-generated policy:</span> <span class="output">github:read, github:write, aws:s3:get</span></span>
+                    <span class="terminal-line"><span class="output">  Analyzing usage patterns for </span><span class="warning">data-pipeline</span><span class="output">...</span></span>
+                    <span class="terminal-line"><span class="success">  ✓ auto-generated policy:</span> <span class="output">aws:s3:GetObject, aws:s3:PutObject</span></span>
+                    <span class="terminal-line"><span class="danger">  ✗ legacy-deploy:</span> <span class="output">no activity in 180 days → recommend revoke</span></span>
+                    <span class="terminal-line">&nbsp;</span>
+                    <span class="terminal-line"><span class="comment">  ── Recommended Policies ──────────────────</span></span>
+                    <span class="terminal-line"><span class="warning">  data-pipeline</span> <span class="output">reduce to:</span> <span class="success">aws:s3:GetObject, aws:s3:PutObject</span></span>
+                    <span class="terminal-line"><span class="danger">  legacy-deploy</span> <span class="output">revoke: </span><span class="danger">no owner, no activity in 180 days</span></span>
+                    <span class="terminal-line">&nbsp;</span>
+                    <span class="terminal-line"><span class="prompt">→</span> <span class="success">4 agents discovered, 2 need remediation</span></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem -->
+    <section class="problem-section" id="problem">
+        <div class="container">
+            <div class="section-label">The Problem</div>
+            <div class="section-title">Your agents have keys.<br>Those keys have no rules.</div>
+            <div class="section-desc">
+                Agents, bots, and service accounts are the new workforce. But unlike human employees, no one knows what they can access, what they've done, or who owns them.
+            </div>
+            <div class="problem-grid">
+                <div class="problem-card">
+                    <div class="problem-icon">🤖</div>
+                    <h3>Uncontrolled Agents</h3>
+                    <p>Every CI/CD pipeline, chatbot, and automation runs with broad permissions. No per-agent policies. No scoping.</p>
+                    <div class="problem-stat mono">144:1</div>
+                </div>
+                <div class="problem-card">
+                    <div class="problem-icon">🔑</div>
+                    <h3>Overprivileged Keys</h3>
+                    <p>Service accounts with full access when they only need read. Keys with 50 permissions using 3.</p>
+                    <div class="problem-stat mono">62%</div>
+                </div>
+                <div class="problem-card">
+                    <div class="problem-icon">👻</div>
+                    <h3>Orphaned Credentials</h3>
+                    <p>No owner. No expiry. Created by someone who left. Still running, still a liability.</p>
+                    <div class="problem-stat mono">44%</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solution -->
+    <section class="solution-section" id="solution">
+        <div class="container">
+            <div class="solution-grid">
+                <div>
+                    <div class="section-label">The Solution</div>
+                    <div class="section-title">Every agent gets a policy.<br>Every policy gets enforced.</div>
+                    <p class="section-desc">
+                        Harbinger gives each agent a scoped token and enforces exactly what it can do. Agent requests go through a policy engine that validates identity, checks policy, and proxies with the real credential.
+                    </p>
+                    <div class="features-list">
+                        <div class="feature-item">
+                            <div class="feature-check">✓</div>
+                            <div>
+                                <h4>Per-Agent Identity</h4>
+                                <p>Each agent gets a unique token. You always know who's doing what.</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-check">✓</div>
+                            <div>
+                                <h4>Policy Enforcement</h4>
+                                <p>Define what each agent can access, when, and how often.</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-check">✓</div>
+                            <div>
+                                <h4>Credential Isolation</h4>
+                                <p>Agents never see real credentials. Edge server injects them at request time.</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-check">✓</div>
+                            <div>
+                                <h4>AI-Generated Policies</h4>
+                                <p>Analyzes actual usage and auto-generates the least-privilege policy each agent needs.</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-check">✓</div>
+                            <div>
+                                <h4>Full Audit Trail</h4>
+                                <p>Every agent action logged. Know exactly what your bots are doing.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="solution-visual">
+                    <div class="section-label">How Policy Enforcement Works</div>
+                    <div class="arch-flow">
+                        <div class="arch-node agent">
+                            <div class="node-icon">🤖</div>
+                            <div>
+                                <strong>Agent</strong>
+                                <div class="mono" style="font-size: 0.75rem; color: var(--text-dim);">sends request with scoped token</div>
+                            </div>
+                        </div>
+                        <div class="arch-arrow">↓ validates token + checks policy</div>
+                        <div class="arch-node edge">
+                            <div class="node-icon">🛡</div>
+                            <div>
+                                <strong>Policy Engine</strong>
+                                <div class="mono" style="font-size: 0.75rem; color: var(--text-dim);">is this agent allowed? → checks policy</div>
+                            </div>
+                        </div>
+                        <div class="arch-arrow">↓ fetches real credential if allowed</div>
+                        <div class="arch-node vault">
+                            <div class="node-icon">🔑</div>
+                            <div>
+                                <strong>Secret Manager</strong>
+                                <div class="mono" style="font-size: 0.75rem; color: var(--text-dim);">agent never sees this</div>
+                            </div>
+                        </div>
+                        <div class="arch-arrow">↓ proxies request with real credential</div>
+                        <div class="arch-node target">
+                            <div class="node-icon">☁</div>
+                            <div>
+                                <strong>Target API</strong>
+                                <div class="mono" style="font-size: 0.75rem; color: var(--text-dim);">GitHub / AWS / GCP / Azure</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-section" id="how">
+        <div class="container">
+            <div class="section-label">How it works</div>
+            <div class="section-title">From discovery to enforcement</div>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Discover Agents</h3>
+                    <p>Connect GitHub and cloud accounts. Harbinger finds every bot, service account, and API key.</p>
+                    <div class="step-connector">→</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Map Permissions</h3>
+                    <p>See what each agent can do. Identify overprivileged and orphaned credentials.</p>
+                    <div class="step-connector">→</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>AI Generates Policies</h3>
+                    <p>AI analyzes usage and auto-generates the least-privilege policy for each agent.</p>
+                    <div class="step-connector">→</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Enforce at Edge</h3>
+                    <p>Agent requests flow through policy engine. Policy checked before every action.</p>
+                    <div class="step-connector">→</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <h3>Audit Everything</h3>
+                    <p>Full trail of every agent action. Detect anomalies. Prove compliance.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Policy Enforcement Deep Dive -->
+    <section class="solution-section" id="policy">
+        <div class="container">
+            <div class="solution-grid">
+                <div>
+                    <div class="section-label">Policy Engine</div>
+                    <div class="section-title">Per-agent policies.<br>Enforced at runtime.</div>
+                    <p class="section-desc">
+                        Every agent gets its own policy. Define what it can access, which endpoints it can call, and when it's allowed to run. Policies are evaluated at the edge , before any request reaches your infrastructure.
+                    </p>
+                    <div class="features-list">
+                        <div class="feature-item">
+                            <div class="feature-check">✓</div>
+                            <div>
+                                <h4>Agent → Group → Policy</h4>
+                                <p>Assign agents to groups. Policies apply to groups. One rule covers many agents.</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-check">✓</div>
+                            <div>
+                                <h4>Time & Rate Limits</h4>
+                                <p>Deploy-bot can only run 9am-6pm. CI-runner: 500 requests/hour max.</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-check">✓</div>
+                            <div>
+                                <h4>Path Restrictions</h4>
+                                <p>Agent X can only access /repos/myorg/deploy-*. Nothing else.</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-check">✓</div>
+                            <div>
+                                <h4>AI-Powered Least Privilege</h4>
+                                <p>AI learns what each agent actually uses and auto-generates the least-privilege policy. No manual tuning.</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-check">✓</div>
+                            <div>
+                                <h4>Fail-Closed Security</h4>
+                                <p>If policy engine can't verify, request is denied. Always.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="solution-visual">
+                    <div class="section-label">Example: Agent Policy</div>
+                    <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; line-height: 1.8;">
+                        <div style="color: var(--text-dim);"># auto-generated by AI based on usage</div>
+                        <div style="color: var(--accent);">agent:</div>
+                        <div style="padding-left: 1rem;">id: <span style="color: var(--warning);">deploy-bot</span></div>
+                        <div style="padding-left: 1rem;">group: <span style="color: var(--warning);">platform-team</span></div>
+                        <div style="color: var(--accent);">permissions:</div>
+                        <div style="padding-left: 1rem;">- <span style="color: var(--text);">github:read</span> <span style="color: var(--text-dim);"># used 1,247 times</span></div>
+                        <div style="padding-left: 1rem;">- <span style="color: var(--text);">github:write</span> <span style="color: var(--text-dim);"># used 89 times</span></div>
+                        <div style="padding-left: 1rem;">- <span style="color: var(--text);">aws:s3:get</span> <span style="color: var(--text-dim);"># used 34 times</span></div>
+                        <div style="color: var(--accent);">constraints:</div>
+                        <div style="padding-left: 1rem;">time_window: <span style="color: var(--warning);">"09:00-18:00 IST"</span></div>
+                        <div style="padding-left: 1rem;">rate_limit: <span style="color: var(--warning);">500/min</span></div>
+                        <div style="padding-left: 1rem;">paths:</div>
+                        <div style="padding-left: 2rem;">- <span style="color: var(--text);">"/repos/myorg/*"</span></div>
+                        <div style="padding-left: 2rem;">- <span style="color: var(--text);">"/s3/myorg-deploy/*"</span></div>
+                        <div style="color: var(--accent);">enforcement:</div>
+                        <div style="padding-left: 1rem;">mode: <span style="color: var(--danger);">fail_closed</span></div>
+                        <div style="padding-left: 1rem;">audit: <span style="color: var(--text);">true</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section" id="waitlist">
+        <div class="container">
+            <div class="cta-box">
+                <div class="section-label">Early Access</div>
+                <h2>Non-Human Identities.<br>Human Support. <3</h2>
+                <p>Join the waitlist. We'll reach out before we launch and give you early access to the CLI.</p>
+                <form class="waitlist-form" action="https://docs.google.com/forms/d/e/1FAIpQLSfukijrYxf_kNJTU-MfIGiQzW8QCbqd1CCUOeIaL0leVqBw3g/formResponse" method="POST" target="_blank" onsubmit="handleSubmit(event)">
+                    <input type="email" name="entry.1496134021" placeholder="you@company.com" required id="email">
+                    <button type="submit" class="btn btn-primary">Join Waitlist</button>
+                </form>
+                <p id="confirmation" style="display: none; color: var(--accent); margin-top: 1rem; font-size: 0.9rem;"></p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>Harbinger : Non-Human Identities. Human-Grade Control.</p>
+        </div>
+    </footer>
+
+    <script>
+        function handleSubmit(e) {
+            const email = document.getElementById('email').value;
+            const confirmation = document.getElementById('confirmation');
+            const form = e.target;
+
+            form.style.display = 'none';
+            confirmation.style.display = 'block';
+            confirmation.textContent = `✓ ${email} added to waitlist. We'll be in touch.`;
+
+        }
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
 </html>
