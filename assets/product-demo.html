@@ -1,0 +1,637 @@
+<title>Harbinger — Product Walkthrough</title>
+<style>
+  :root {
+    --color-bg: #0a0e16;
+    --color-surface: #10151f;
+    --color-surface-raised: #161c2a;
+    --color-border: #212838;
+    --color-border-strong: #2c3548;
+    --color-text: #eef1f5;
+    --color-text-muted: #8d96ab;
+    --color-text-faint: #55607a;
+    --color-accent: #3fc0dd;
+    --color-accent-hover: #6ad4ea;
+    --color-accent-muted: #0f2b33;
+    --color-magenta: #ee1f96;
+    --color-magenta-muted: #34122a;
+    --color-success: #3fb950;
+    --color-success-muted: #132a18;
+    --color-danger: #f85149;
+    --color-danger-muted: #2d1618;
+    --color-warning: #e3b341;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    padding: 28px 20px 40px;
+    min-height: 100%;
+  }
+  .mono { font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace; }
+
+  header.page {
+    width: 100%;
+    max-width: 1040px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .eyebrow {
+    font-family: ui-monospace, monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .eyebrow::before {
+    content: '';
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--color-accent);
+    box-shadow: 0 0 6px var(--color-accent);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+  header.page h1 { font-family: ui-monospace, monospace; font-size: 18px; margin: 4px 0 0; font-weight: 600; }
+  header.page p { color: var(--color-text-faint); font-size: 12px; margin: 2px 0 0; }
+
+  /* --- device frame --- */
+  .device {
+    width: 100%;
+    max-width: 1040px;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--color-surface);
+    box-shadow: 0 30px 80px -30px rgba(0,0,0,0.6);
+  }
+  .chrome {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-surface-raised);
+  }
+  .chrome .dots { display: flex; gap: 6px; }
+  .chrome .dots span { width: 8px; height: 8px; border-radius: 50%; background: var(--color-border-strong); }
+  .chrome .url {
+    margin-left: 6px;
+    font-family: ui-monospace, monospace;
+    font-size: 10.5px;
+    color: var(--color-text-faint);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 5px;
+    padding: 3px 10px;
+    flex: 1;
+    max-width: 260px;
+  }
+
+  .shell { display: flex; height: 560px; position: relative; }
+
+  .sidebar {
+    width: 210px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--color-border);
+    background: var(--color-surface);
+  }
+  .brand { padding: 16px 16px 14px; border-bottom: 1px solid var(--color-border); }
+  .brand .word { font-family: ui-monospace, monospace; font-size: 14px; font-weight: 700; color: var(--color-text); }
+  .brand .word b { color: var(--color-accent); font-weight: 700; }
+  .brand .status {
+    margin-top: 8px; display: flex; align-items: center; gap: 6px;
+    font-family: ui-monospace, monospace; font-size: 8.5px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--color-text-faint);
+  }
+  .brand .status::before { content:''; width:5px; height:5px; border-radius:50%; background: var(--color-success); box-shadow: 0 0 6px var(--color-success); }
+
+  nav.sidenav { flex: 1; padding: 10px 8px; overflow: hidden; }
+  .grouplabel {
+    font-family: ui-monospace, monospace; font-size: 8.5px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--color-text-faint); padding: 10px 10px 5px;
+  }
+  .grouplabel:first-child { padding-top: 2px; }
+  .navdivider { height: 1px; background: var(--color-border); margin: 6px 8px; }
+  .navrow {
+    display: flex; align-items: center; gap: 9px;
+    padding: 7px 10px; border-radius: 6px; border-left: 2px solid transparent;
+    font-size: 12.5px; color: var(--color-text-muted);
+    position: relative;
+    transition: color .25s, background-color .25s, border-color .25s;
+  }
+  .navrow svg { width: 13px; height: 13px; flex-shrink: 0; opacity: .7; fill:none; stroke:currentColor; stroke-width:1.6; }
+  .navrow.active { color: var(--color-accent); background: var(--color-accent-muted); border-left-color: var(--color-accent); font-weight: 500; }
+  .navrow.active svg { opacity: 1; }
+
+  .profile {
+    display: flex; align-items: center; gap: 8px;
+    border-top: 1px solid var(--color-border); padding: 10px 12px;
+  }
+  .avatar {
+    width: 22px; height: 22px; border-radius: 6px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: ui-monospace, monospace; font-size: 9px; font-weight: 700; color: var(--color-accent);
+    background: linear-gradient(135deg, var(--color-accent-muted), var(--color-magenta-muted));
+    border: 1px solid var(--color-border-strong);
+  }
+  .profile .who { min-width: 0; flex: 1; }
+  .profile .name { font-size: 11px; color: var(--color-text); }
+  .profile .role { font-family: ui-monospace, monospace; font-size: 8.5px; color: var(--color-text-faint); }
+  .profile .logout { font-size: 10px; color: var(--color-text-faint); }
+
+  /* --- cursor --- */
+  .cursor {
+    position: absolute;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(63,192,221,0.9), rgba(63,192,221,0.15) 70%);
+    border: 1px solid var(--color-accent);
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    transition: left .55s cubic-bezier(.4,0,.2,1), top .55s cubic-bezier(.4,0,.2,1), opacity .2s;
+    z-index: 20;
+    opacity: 0;
+  }
+  .cursor.show { opacity: 1; }
+  .cursor.ping::after {
+    content: '';
+    position: absolute; inset: -6px;
+    border-radius: 50%;
+    border: 1.5px solid var(--color-accent);
+    animation: ping .5s ease-out;
+  }
+  @keyframes ping { from { transform: scale(.4); opacity: .9; } to { transform: scale(1.8); opacity: 0; } }
+
+  /* --- content --- */
+  .content {
+    flex: 1;
+    padding: 26px 30px;
+    overflow: hidden;
+    position: relative;
+  }
+  .scene {
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity .25s ease, transform .25s ease;
+  }
+  .scene.in { opacity: 1; transform: translateY(0); }
+
+  .pagehead { display: flex; align-items: center; gap: 11px; margin-bottom: 18px; }
+  .icon-chip {
+    width: 30px; height: 30px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--color-accent-muted); border: 1px solid rgba(63,192,221,0.25);
+    clip-path: polygon(20% 0, 100% 0, 100% 80%, 80% 100%, 0 100%, 0 20%);
+  }
+  .icon-chip svg { width: 15px; height: 15px; stroke: var(--color-accent); fill: none; stroke-width: 1.6; }
+  .pagehead h2 { font-family: ui-monospace, monospace; font-size: 16px; font-weight: 600; margin: 0; }
+  .pagehead p { font-size: 11px; color: var(--color-text-faint); margin: 2px 0 0; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  thead tr { border-bottom: 1px solid var(--color-border); background: var(--color-surface); }
+  th { text-align: left; padding: 7px 12px; font-size: 10px; color: var(--color-text-faint); font-weight: 500; text-transform: uppercase; letter-spacing: .04em; }
+  td { padding: 8px 12px; border-bottom: 1px solid var(--color-border); color: var(--color-text); }
+  tbody tr:last-child td { border-bottom: none; }
+  .tname { font-family: ui-monospace, monospace; }
+  .tmuted { color: var(--color-text-muted); font-size: 11px; }
+  .tfaint { color: var(--color-text-faint); font-size: 11px; }
+  .tablewrap { border: 1px solid var(--color-border); border-radius: 8px; overflow: hidden; }
+
+  .badge { display: inline-flex; align-items: center; gap: 5px; font-size: 10.5px; }
+  .badge::before { content:''; width:5px; height:5px; border-radius:50%; }
+  .badge.ok { color: var(--color-success); } .badge.ok::before { background: var(--color-success); box-shadow: 0 0 4px var(--color-success); }
+  .badge.warn { color: var(--color-warning); } .badge.warn::before { background: var(--color-warning); box-shadow: 0 0 4px var(--color-warning); }
+  .badge.danger { color: var(--color-danger); } .badge.danger::before { background: var(--color-danger); }
+  .badge.info { color: var(--color-accent); } .badge.info::before { background: var(--color-accent); }
+  .badge.off { color: var(--color-text-faint); } .badge.off::before { background: var(--color-text-faint); }
+
+  .cards3 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+  .card { border: 1px solid var(--color-border); background: var(--color-bg); border-radius: 8px; padding: 12px 14px; }
+  .card .l { font-family: ui-monospace, monospace; font-size: 9.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--color-text-faint); }
+  .card .v { font-family: ui-monospace, monospace; font-size: 20px; margin-top: 6px; }
+  .card .v.ok { color: var(--color-success); } .card .v.warn { color: var(--color-warning); }
+
+  .tabbar { display: flex; gap: 4px; border-bottom: 1px solid var(--color-border); margin-bottom: 16px; }
+  .tabbar div { padding: 6px 12px; font-size: 11.5px; color: var(--color-text-faint); border-bottom: 2px solid transparent; }
+  .tabbar div.active { color: var(--color-accent); border-color: var(--color-accent); }
+
+  .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .tile { border: 1px solid var(--color-border); background: var(--color-bg); border-radius: 8px; padding: 12px; }
+  .tile.dim { opacity: .45; }
+  .tile .th { width: 26px; height: 26px; border-radius: 6px; background: var(--color-surface-raised); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; font-family: ui-monospace, monospace; }
+  .tile .tt { font-size: 12px; margin-top: 8px; display:flex; justify-content: space-between; align-items:center; }
+  .tile .td { font-size: 10px; color: var(--color-text-faint); margin-top: 3px; }
+
+  .btnrow { display: flex; gap: 6px; }
+  .mini-btn { font-size: 10px; padding: 3px 9px; border-radius: 5px; border: 1px solid var(--color-border-strong); color: var(--color-text-muted); }
+  .mini-btn.accent { background: var(--color-accent); color: var(--color-bg); border-color: transparent; font-weight: 500; }
+  .mini-btn.danger { color: var(--color-danger); border-color: transparent; }
+
+  /* --- progress rail --- */
+  .rail { width: 100%; max-width: 1040px; display: flex; gap: 5px; }
+  .rail .seg { flex: 1; height: 3px; border-radius: 2px; background: var(--color-border); overflow: hidden; position: relative; cursor: pointer; }
+  .rail .seg span { position: absolute; inset: 0; background: var(--color-accent); width: 0%; transform-origin: left; }
+  .rail .seg.done span { width: 100%; }
+  .rail .seg.active span { animation: fillbar linear forwards; }
+  @keyframes fillbar { from { width: 0%; } to { width: 100%; } }
+
+  .controls { display: flex; align-items: center; gap: 14px; }
+  .ctrlbtn {
+    width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--color-border-strong);
+    background: var(--color-surface); color: var(--color-text-muted); display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+  }
+  .ctrlbtn:hover { color: var(--color-text); border-color: var(--color-accent); }
+  .scenelabel { font-family: ui-monospace, monospace; font-size: 10.5px; color: var(--color-text-faint); min-width: 190px; text-align: center; }
+  .scenelabel b { color: var(--color-text); font-weight: 500; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scene { transition: none; }
+    .cursor { transition: none; }
+    .eyebrow::before { animation: none; }
+  }
+
+  /* Embed mode (?embed=1): dropped into a host page that already supplies
+     its own browser-chrome frame around this iframe, so this page's own
+     header, dot-progress rail, transport controls, and device chrome/URL
+     bar would be redundant - only the sidebar+content shell is shown,
+     filling the host's frame edge-to-edge. */
+  body.embed {
+    padding: 0;
+    gap: 0;
+  }
+  body.embed header.page,
+  body.embed .chrome,
+  body.embed .rail,
+  body.embed .controls {
+    display: none;
+  }
+  body.embed .device {
+    max-width: none;
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  body.embed .shell {
+    height: 100%;
+  }
+</style>
+
+<header class="page">
+  <div>
+    <div class="eyebrow">walkthrough · mock data</div>
+    <h1>What we've shipped so far</h1>
+    <p>Auto-playing tour of Enrollment, Certificates, Policies, Vault Integration, Traffic, and Organization — populated with illustrative data, not a live instance.</p>
+  </div>
+</header>
+
+<div class="device">
+  <div class="chrome">
+    <div class="dots"><span></span><span></span><span></span></div>
+    <div class="url">app.harbinger.internal</div>
+  </div>
+  <div class="shell" id="shell">
+    <div class="cursor" id="cursor"></div>
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="word">harbinger<b>.</b></div>
+        <div class="status">admin reachable</div>
+      </div>
+      <nav class="sidenav" id="sidenav"></nav>
+      <div class="profile">
+        <div class="avatar">SM</div>
+        <div class="who">
+          <div class="name">sarah</div>
+          <div class="role">super_admin</div>
+        </div>
+        <div class="logout">Log out</div>
+      </div>
+    </aside>
+    <div class="content"><div class="scene in" id="scene"></div></div>
+  </div>
+</div>
+
+<div class="rail" id="rail"></div>
+<div class="controls">
+  <button class="ctrlbtn" id="prevBtn" title="Previous">‹</button>
+  <button class="ctrlbtn" id="playBtn" title="Play/Pause">⏸</button>
+  <button class="ctrlbtn" id="nextBtn" title="Next">›</button>
+  <div class="scenelabel" id="scenelabel"></div>
+</div>
+
+<script>
+if (new URLSearchParams(location.search).get('embed') === '1') {
+  document.body.classList.add('embed')
+}
+
+const ICONS = {
+  overview: '<path d="M3 12l9-9 9 9M5 10v10h5v-6h4v6h5V10"/>',
+  enrollment: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
+  certificates: '<path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/>',
+  policies: '<path d="M4 6h16M4 12h10M4 18h13"/>',
+  organization: '<circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c.6-3.6 3.3-6 6.5-6s5.9 2.4 6.5 6"/><circle cx="17.5" cy="7.5" r="2.3"/><path d="M15.5 20c.3-2.5 1.9-4.3 4-4.8"/>',
+  invites: '<rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18M8 4v2M16 4v2"/>',
+  traffic: '<path d="M3 17l5-6 4 4 8-9"/>',
+  vault: '<rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/><circle cx="12" cy="15" r="1.3"/>',
+}
+
+const NAV = [
+  { label: 'Overview', icon: 'overview', group: 'Agents' },
+  { label: 'Enrollment', icon: 'enrollment', group: 'Agents' },
+  { label: 'Certificates', icon: 'certificates', group: 'Agents' },
+  { label: 'Policies', icon: 'policies', group: 'Agents' },
+  { label: 'Vault Integration', icon: 'vault', group: 'Agents' },
+  { label: 'Traffic', icon: 'traffic', group: 'Agents' },
+  { label: 'Organization', icon: 'organization', group: 'Access' },
+  { label: 'Invites', icon: 'invites', group: 'Access' },
+]
+
+const AGENTS = [
+  ['checkout-bot', 'active', '2027-01-14'],
+  ['invoice-parser', 'active', '2027-02-02'],
+  ['slack-notifier', 'active', '2026-12-20'],
+  ['deploy-agent', 'active', '2027-03-11'],
+  ['log-shipper', 'active', '2026-11-05'],
+  ['data-sync', 'expiring', '2026-08-02'],
+  ['email-digest', 'active', '2027-01-30'],
+  ['web-scraper', 'active', '2027-04-18'],
+  ['backup-runner', 'revoked', '—'],
+  ['metrics-collector', 'active', '2027-02-25'],
+]
+
+function pageHead(icon, title, sub) {
+  return `<div class="pagehead"><div class="icon-chip"><svg viewBox="0 0 24 24">${ICONS[icon]}</svg></div><div><h2>${title}</h2><p>${sub}</p></div></div>`
+}
+
+function statusBadge(kind) {
+  const map = {
+    active: ['ok', 'Active'], expiring: ['warn', 'Expiring soon'], revoked: ['danger', 'Revoked'],
+    allow: ['ok', 'allow'], deny: ['danger', 'deny'],
+    pending: ['info', 'pending'], connected: ['ok', 'Connected'], off: ['off', 'Not configured'], soon: ['off', 'Coming soon'],
+  }
+  const [variant, label] = map[kind]
+  return `<span class="badge ${variant}">${label}</span>`
+}
+
+const SCENES = [
+  {
+    nav: 'Overview',
+    render: () => `
+      ${pageHead('overview', 'Overview', 'Fleet health at a glance across every enrolled agent.')}
+      <div class="cards3">
+        <div class="card"><div class="l">Active agents</div><div class="v ok">9</div></div>
+        <div class="card"><div class="l">Pending enrollment</div><div class="v warn">2</div></div>
+        <div class="card"><div class="l">Policies</div><div class="v">5</div></div>
+        <div class="card"><div class="l">Orgs / teams</div><div class="v">3 / 3</div></div>
+      </div>
+      <div class="tablewrap">
+        <table><thead><tr><th>Recent activity</th><th></th></tr></thead>
+        <tbody>
+          <tr><td>deploy-agent completed enrollment</td><td class="tfaint">2m ago</td></tr>
+          <tr><td>data-sync certificate expiring in 12 days</td><td class="tfaint">1h ago</td></tr>
+          <tr><td>pdf-signer submitted enrollment request</td><td class="tfaint">3h ago</td></tr>
+        </tbody></table>
+      </div>`,
+  },
+  {
+    nav: 'Enrollment',
+    render: () => `
+      ${pageHead('enrollment', 'Enrollment', 'Review and approve agents requesting a certificate.')}
+      <div class="tablewrap"><table>
+        <thead><tr><th>Agent</th><th>Claimed by</th><th>Requested</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          <tr><td class="tname">recommendation-engine</td><td class="tmuted">alice</td><td class="tfaint">4m ago</td><td>${statusBadge('pending')}</td>
+            <td><div class="btnrow"><span class="mini-btn accent">Approve</span><span class="mini-btn danger">Reject</span></div></td></tr>
+          <tr><td class="tname">pdf-signer</td><td class="tmuted">ben</td><td class="tfaint">3h ago</td><td>${statusBadge('pending')}</td>
+            <td><div class="btnrow"><span class="mini-btn accent">Approve</span><span class="mini-btn danger">Reject</span></div></td></tr>
+        </tbody></table></div>`,
+  },
+  {
+    nav: 'Certificates',
+    render: () => `
+      ${pageHead('certificates', 'Certificates', '10 agents currently enrolled, signed by the Agent CA.')}
+      <div class="tablewrap"><table>
+        <thead><tr><th>Agent</th><th>Status</th><th>Expires</th><th></th></tr></thead>
+        <tbody>${AGENTS.map(([name, status, exp]) => `
+          <tr><td class="tname">${name}</td><td>${statusBadge(status)}</td><td class="tmuted">${exp}</td>
+          <td class="tfaint">${status === 'revoked' ? '' : 'Revoke'}</td></tr>`).join('')}
+        </tbody></table></div>`,
+  },
+  {
+    nav: 'Policies',
+    render: () => `
+      ${pageHead('policies', 'Policies', 'Traffic and secret-injection rules, evaluated deny-overrides-allow.')}
+      <div class="tablewrap"><table>
+        <thead><tr><th>Name</th><th>Target</th><th>Scope</th><th></th></tr></thead>
+        <tbody>
+          <tr><td class="tname">allow-openai-agents</td><td class="tmuted">http_request</td><td class="tfaint">global</td><td class="tfaint">View</td></tr>
+          <tr><td class="tname">deny-external-egress</td><td class="tmuted">http_request</td><td class="tfaint">global</td><td class="tfaint">View</td></tr>
+          <tr><td class="tname">secrets-injection-slack</td><td class="tmuted">secret_target</td><td class="tfaint">Acme Corp</td><td class="tfaint">View</td></tr>
+          <tr><td class="tname">deploy-agent-scope</td><td class="tmuted">http_request</td><td class="tfaint">Platform</td><td class="tfaint">View</td></tr>
+          <tr><td class="tname">read-only-metrics</td><td class="tmuted">http_request</td><td class="tfaint">Data</td><td class="tfaint">View</td></tr>
+        </tbody></table></div>`,
+  },
+  {
+    nav: 'Vault Integration',
+    render: () => `
+      ${pageHead('vault', 'Vault Integration', 'Where the gateway resolves secrets referenced by a policy.')}
+      <div class="tiles">
+        <div class="tile"><div class="th" style="color:#3fc0dd">LOC</div><div class="tt">Local ${statusBadge('active').replace('Active','3 secrets')}</div><div class="td">Encrypted on this machine</div></div>
+        <div class="tile"><div class="th" style="color:#FF9900">AWS</div><div class="tt">AWS ${statusBadge('connected')}</div><div class="td">Secrets Manager, via IAM Roles Anywhere</div></div>
+        <div class="tile dim"><div class="th">GCP</div><div class="tt">GCP ${statusBadge('soon')}</div><div class="td">Secret Manager</div></div>
+      </div>`,
+  },
+  {
+    nav: 'Traffic',
+    render: () => `
+      ${pageHead('traffic', 'Traffic', 'One row per policy decision a gateway made.')}
+      <div class="tablewrap"><table>
+        <thead><tr><th>Agent</th><th>Host</th><th>Decision</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td class="tname">checkout-bot</td><td class="tmuted">api.stripe.com</td><td>${statusBadge('allow')}</td><td class="tfaint">matched allow-openai-agents</td></tr>
+          <tr><td class="tname">web-scraper</td><td class="tmuted">unknown-domain.xyz</td><td>${statusBadge('deny')}</td><td class="tfaint">no matching allow rule</td></tr>
+          <tr><td class="tname">slack-notifier</td><td class="tmuted">hooks.slack.com</td><td>${statusBadge('allow')}</td><td class="tfaint">matched secrets-injection-slack</td></tr>
+          <tr><td class="tname">deploy-agent</td><td class="tmuted">github.com</td><td>${statusBadge('allow')}</td><td class="tfaint">matched deploy-agent-scope</td></tr>
+          <tr><td class="tname">data-sync</td><td class="tmuted">internal-metrics.local</td><td>${statusBadge('deny')}</td><td class="tfaint">host not in target list</td></tr>
+        </tbody></table></div>`,
+  },
+  {
+    nav: 'Organization',
+    render: () => `
+      ${pageHead('organization', 'Organization', 'Orgs, teams, and the people inside them.')}
+      <div class="tabbar"><div class="active">Orgs</div><div>Teams</div><div>Users</div></div>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Org</th><th>Teams</th><th>Users</th><th></th></tr></thead>
+        <tbody>
+          <tr><td class="tname">Acme Corp</td><td class="tmuted">2</td><td class="tmuted">4</td><td class="tfaint">Manage</td></tr>
+          <tr><td class="tname">Globex Industries</td><td class="tmuted">1</td><td class="tmuted">1</td><td class="tfaint">Manage</td></tr>
+          <tr><td class="tname">Initech</td><td class="tmuted">0</td><td class="tmuted">0</td><td class="tfaint">Manage</td></tr>
+        </tbody></table></div>`,
+  },
+  {
+    nav: 'Organization',
+    render: () => `
+      ${pageHead('organization', 'Organization', 'Orgs, teams, and the people inside them.')}
+      <div class="tabbar"><div>Orgs</div><div>Teams</div><div class="active">Users</div></div>
+      <div class="tablewrap"><table>
+        <thead><tr><th>User</th><th>Org</th><th>Team</th><th>Role</th></tr></thead>
+        <tbody>
+          <tr><td class="tname">sarah</td><td class="tmuted">—</td><td class="tmuted">—</td><td class="tfaint">super_admin</td></tr>
+          <tr><td class="tname">alice</td><td class="tmuted">Acme Corp</td><td class="tmuted">—</td><td class="tfaint">org_admin</td></tr>
+          <tr><td class="tname">ben</td><td class="tmuted">Globex Industries</td><td class="tmuted">—</td><td class="tfaint">org_admin</td></tr>
+          <tr><td class="tname">priya</td><td class="tmuted">Acme Corp</td><td class="tmuted">Platform</td><td class="tfaint">team_admin</td></tr>
+          <tr><td class="tname">diego</td><td class="tmuted">Acme Corp</td><td class="tmuted">Data</td><td class="tfaint">member</td></tr>
+          <tr><td class="tname">mika</td><td class="tmuted">Globex Industries</td><td class="tmuted">Growth</td><td class="tfaint">member</td></tr>
+        </tbody></table></div>`,
+  },
+  {
+    nav: 'Invites',
+    render: () => `
+      ${pageHead('invites', 'Invites', 'Registration is invite-only — every invite carries a mandatory org.')}
+      <div class="tablewrap"><table>
+        <thead><tr><th>Org</th><th>Team</th><th>Role</th><th>Status</th><th>Expires</th></tr></thead>
+        <tbody>
+          <tr><td class="tname">Initech</td><td class="tmuted">—</td><td class="tmuted">org_admin</td><td>${statusBadge('pending')}</td><td class="tfaint">6d</td></tr>
+          <tr><td class="tname">Globex Industries</td><td class="tmuted">Growth</td><td class="tmuted">member</td><td>${statusBadge('pending')}</td><td class="tfaint">6d</td></tr>
+        </tbody></table></div>`,
+  },
+]
+
+const SCENE_MS = 3400
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+const sidenavEl = document.getElementById('sidenav')
+const sceneEl = document.getElementById('scene')
+const cursorEl = document.getElementById('cursor')
+const railEl = document.getElementById('rail')
+const labelEl = document.getElementById('scenelabel')
+const playBtn = document.getElementById('playBtn')
+
+let groups = []
+NAV.forEach((item) => { if (!groups.includes(item.group)) groups.push(item.group) })
+sidenavEl.innerHTML = groups.map((g, gi) => `
+  ${gi > 0 ? '<div class="navdivider"></div>' : ''}
+  <div class="grouplabel">${g}</div>
+  ${NAV.filter((n) => n.group === g).map((n) => `<div class="navrow" data-label="${n.label}"><svg viewBox="0 0 24 24">${ICONS[n.icon]}</svg>${n.label}</div>`).join('')}
+`).join('')
+
+railEl.innerHTML = SCENES.map((_, i) => `<div class="seg" data-i="${i}"><span></span></div>`).join('')
+
+let idx = 0
+let playing = !reducedMotion
+let timer = null
+
+function setActiveNav(label) {
+  document.querySelectorAll('.navrow').forEach((el) => el.classList.toggle('active', el.dataset.label === label))
+}
+
+function moveCursorTo(label) {
+  const target = [...document.querySelectorAll('.navrow')].find((el) => el.dataset.label === label)
+  if (!target) return
+  const shellRect = document.getElementById('shell').getBoundingClientRect()
+  const r = target.getBoundingClientRect()
+  cursorEl.style.left = (r.left - shellRect.left + 14) + 'px'
+  cursorEl.style.top = (r.top - shellRect.top + r.height / 2) + 'px'
+  cursorEl.classList.add('show')
+}
+
+function updateRail() {
+  railEl.querySelectorAll('.seg').forEach((seg, i) => {
+    seg.classList.toggle('done', i < idx)
+    seg.classList.toggle('active', i === idx && playing)
+    const span = seg.querySelector('span')
+    if (i === idx && playing) {
+      span.style.animation = 'none'
+      void span.offsetWidth
+      span.style.animation = `fillbar ${SCENE_MS}ms linear forwards`
+    } else if (i !== idx) {
+      span.style.animation = 'none'
+      span.style.width = i < idx ? '100%' : '0%'
+    }
+  })
+}
+
+let hasRenderedOnce = false
+
+function showScene(i, animateCursor) {
+  const scene = SCENES[i]
+  const isFirstPaint = !hasRenderedOnce
+  hasRenderedOnce = true
+  if (animateCursor && !reducedMotion && !isFirstPaint) {
+    moveCursorTo(scene.nav)
+    setTimeout(() => {
+      cursorEl.classList.add('ping')
+      setTimeout(() => cursorEl.classList.remove('ping'), 500)
+    }, 560)
+  } else if (isFirstPaint && !reducedMotion) {
+    moveCursorTo(scene.nav)
+  }
+  setActiveNav(scene.nav)
+  if (isFirstPaint) {
+    sceneEl.innerHTML = scene.render()
+    sceneEl.classList.add('in')
+  } else {
+    const delay = animateCursor && !reducedMotion ? 620 : 0
+    setTimeout(() => {
+      sceneEl.classList.remove('in')
+      setTimeout(() => {
+        sceneEl.innerHTML = scene.render()
+        sceneEl.classList.add('in')
+      }, 220)
+    }, delay)
+  }
+  labelEl.innerHTML = `<b>${i + 1}/${SCENES.length}</b> &nbsp;·&nbsp; ${scene.nav}`
+  updateRail()
+}
+
+function next(manual) {
+  idx = (idx + 1) % SCENES.length
+  showScene(idx, true)
+  if (manual) restartTimer()
+}
+function prev() {
+  idx = (idx - 1 + SCENES.length) % SCENES.length
+  showScene(idx, true)
+  restartTimer()
+}
+
+function restartTimer() {
+  clearInterval(timer)
+  if (playing) timer = setInterval(() => next(false), SCENE_MS)
+}
+
+document.getElementById('nextBtn').addEventListener('click', () => next(true))
+document.getElementById('prevBtn').addEventListener('click', prev)
+playBtn.addEventListener('click', () => {
+  playing = !playing
+  playBtn.textContent = playing ? '⏸' : '▶'
+  restartTimer()
+  updateRail()
+})
+railEl.querySelectorAll('.seg').forEach((seg) => {
+  seg.addEventListener('click', () => {
+    idx = Number(seg.dataset.i)
+    showScene(idx, true)
+    restartTimer()
+  })
+})
+
+playBtn.textContent = playing ? '⏸' : '▶'
+showScene(0, true)
+restartTimer()
+</script>
