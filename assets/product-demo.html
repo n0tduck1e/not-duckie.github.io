@@ -294,9 +294,9 @@
 
 <header class="page">
   <div>
-    <div class="eyebrow">walkthrough · mock data</div>
+    <div class="eyebrow">walkthrough · real instance data</div>
     <h1>What we've shipped so far</h1>
-    <p>Auto-playing tour of Enrollment, Certificates, Policies, Vault Integration, Traffic, and Organization — populated with illustrative data, not a live instance.</p>
+    <p>Auto-playing tour of Enrollment, Certificates, Policies, Vault Integration, Traffic, and Organization — captured from a real running instance (the enrollment queue is staged for the walkthrough; everything else is live-captured).</p>
   </div>
 </header>
 
@@ -314,9 +314,9 @@
       </div>
       <nav class="sidenav" id="sidenav"></nav>
       <div class="profile">
-        <div class="avatar">SM</div>
+        <div class="avatar">AD</div>
         <div class="who">
-          <div class="name">sarah</div>
+          <div class="name">admin</div>
           <div class="role">super_admin</div>
         </div>
         <div class="logout">Log out</div>
@@ -362,16 +362,9 @@ const NAV = [
 ]
 
 const AGENTS = [
-  ['checkout-bot', 'active', '2027-01-14'],
-  ['invoice-parser', 'active', '2027-02-02'],
-  ['slack-notifier', 'active', '2026-12-20'],
-  ['deploy-agent', 'active', '2027-03-11'],
-  ['log-shipper', 'active', '2026-11-05'],
-  ['data-sync', 'expiring', '2026-08-02'],
-  ['email-digest', 'active', '2027-01-30'],
-  ['web-scraper', 'active', '2027-04-18'],
-  ['backup-runner', 'revoked', '—'],
-  ['metrics-collector', 'active', '2027-02-25'],
+  ['demo-agent-1', 'active', '2027-07-23', '55516169699b2e9…'],
+  ['demo-agent-2', 'active', '2027-07-23', '13e0f379fa0e031…'],
+  ['demo-agent-3', 'active', '2027-07-23', '5138b9c2a5b0d8d…'],
 ]
 
 function pageHead(icon, title, sub) {
@@ -383,6 +376,7 @@ function statusBadge(kind) {
     active: ['ok', 'Active'], expiring: ['warn', 'Expiring soon'], revoked: ['danger', 'Revoked'],
     allow: ['ok', 'allow'], deny: ['danger', 'deny'],
     pending: ['info', 'pending'], connected: ['ok', 'Connected'], off: ['off', 'Not configured'], soon: ['off', 'Coming soon'],
+    redeemed: ['ok', 'Redeemed'], authorized: ['ok', 'authorized'], secretdenied: ['warn', 'denied'], none: ['off', '—'],
   }
   const [variant, label] = map[kind]
   return `<span class="badge ${variant}">${label}</span>`
@@ -394,17 +388,17 @@ const SCENES = [
     render: () => `
       ${pageHead('overview', 'Overview', 'Fleet health at a glance across every enrolled agent.')}
       <div class="cards3">
-        <div class="card"><div class="l">Active agents</div><div class="v ok">9</div></div>
+        <div class="card"><div class="l">Active agents</div><div class="v ok">3</div></div>
         <div class="card"><div class="l">Pending enrollment</div><div class="v warn">2</div></div>
-        <div class="card"><div class="l">Policies</div><div class="v">5</div></div>
-        <div class="card"><div class="l">Orgs / teams</div><div class="v">3 / 3</div></div>
+        <div class="card"><div class="l">Policies</div><div class="v">3</div></div>
+        <div class="card"><div class="l">Orgs / teams</div><div class="v">1 / 2</div></div>
       </div>
       <div class="tablewrap">
         <table><thead><tr><th>Recent activity</th><th></th></tr></thead>
         <tbody>
-          <tr><td>deploy-agent completed enrollment</td><td class="tfaint">2m ago</td></tr>
-          <tr><td>data-sync certificate expiring in 12 days</td><td class="tfaint">1h ago</td></tr>
-          <tr><td>pdf-signer submitted enrollment request</td><td class="tfaint">3h ago</td></tr>
+          <tr><td>demo-agent-1 authorized for slack-bot-token</td><td class="tfaint">2m ago</td></tr>
+          <tr><td>billing-reconciler submitted enrollment request</td><td class="tfaint">6m ago</td></tr>
+          <tr><td>demo-agent-3 denied secret access to slack-bot-token</td><td class="tfaint">1h ago</td></tr>
         </tbody></table>
       </div>`,
   },
@@ -415,20 +409,20 @@ const SCENES = [
       <div class="tablewrap"><table>
         <thead><tr><th>Agent</th><th>Claimed by</th><th>Requested</th><th>Status</th><th></th></tr></thead>
         <tbody>
-          <tr><td class="tname">recommendation-engine</td><td class="tmuted">alice</td><td class="tfaint">4m ago</td><td>${statusBadge('pending')}</td>
+          <tr><td class="tname">billing-reconciler</td><td class="tmuted">marcus</td><td class="tfaint">6m ago</td><td>${statusBadge('pending')}</td>
             <td><div class="btnrow"><span class="mini-btn accent">Approve</span><span class="mini-btn danger">Reject</span></div></td></tr>
-          <tr><td class="tname">pdf-signer</td><td class="tmuted">ben</td><td class="tfaint">3h ago</td><td>${statusBadge('pending')}</td>
+          <tr><td class="tname">support-triage</td><td class="tmuted">priya</td><td class="tfaint">41m ago</td><td>${statusBadge('pending')}</td>
             <td><div class="btnrow"><span class="mini-btn accent">Approve</span><span class="mini-btn danger">Reject</span></div></td></tr>
         </tbody></table></div>`,
   },
   {
     nav: 'Certificates',
     render: () => `
-      ${pageHead('certificates', 'Certificates', '10 agents currently enrolled, signed by the Agent CA.')}
+      ${pageHead('certificates', 'Certificates', '3 agents currently enrolled, signed by the Agent CA.')}
       <div class="tablewrap"><table>
-        <thead><tr><th>Agent</th><th>Status</th><th>Expires</th><th></th></tr></thead>
-        <tbody>${AGENTS.map(([name, status, exp]) => `
-          <tr><td class="tname">${name}</td><td>${statusBadge(status)}</td><td class="tmuted">${exp}</td>
+        <thead><tr><th>Agent</th><th>Serial</th><th>Status</th><th>Expires</th><th></th></tr></thead>
+        <tbody>${AGENTS.map(([name, status, exp, serial]) => `
+          <tr><td class="tname">${name}</td><td class="tmuted">${serial}</td><td>${statusBadge(status)}</td><td class="tmuted">${exp}</td>
           <td class="tfaint">${status === 'revoked' ? '' : 'Revoke'}</td></tr>`).join('')}
         </tbody></table></div>`,
   },
@@ -439,11 +433,9 @@ const SCENES = [
       <div class="tablewrap"><table>
         <thead><tr><th>Name</th><th>Target</th><th>Scope</th><th></th></tr></thead>
         <tbody>
-          <tr><td class="tname">allow-openai-agents</td><td class="tmuted">http_request</td><td class="tfaint">global</td><td class="tfaint">View</td></tr>
-          <tr><td class="tname">deny-external-egress</td><td class="tmuted">http_request</td><td class="tfaint">global</td><td class="tfaint">View</td></tr>
-          <tr><td class="tname">secrets-injection-slack</td><td class="tmuted">secret_target</td><td class="tfaint">Acme Corp</td><td class="tfaint">View</td></tr>
-          <tr><td class="tname">deploy-agent-scope</td><td class="tmuted">http_request</td><td class="tfaint">Platform</td><td class="tfaint">View</td></tr>
-          <tr><td class="tname">read-only-metrics</td><td class="tmuted">http_request</td><td class="tfaint">Data</td><td class="tfaint">View</td></tr>
+          <tr><td class="tname">demo-secrets-policy</td><td class="tmuted">http_request</td><td class="tfaint">global</td><td class="tfaint">View</td></tr>
+          <tr><td class="tname">default-allow-all-acme-corp</td><td class="tmuted">http_request</td><td class="tfaint">org:acme-corp</td><td class="tfaint">View</td></tr>
+          <tr><td class="tname">default-allow-all-admin</td><td class="tmuted">http_request</td><td class="tfaint">user:admin</td><td class="tfaint">View</td></tr>
         </tbody></table></div>`,
   },
   {
@@ -451,23 +443,23 @@ const SCENES = [
     render: () => `
       ${pageHead('vault', 'Vault Integration', 'Where the gateway resolves secrets referenced by a policy.')}
       <div class="tiles">
-        <div class="tile"><div class="th" style="color:#3fc0dd">LOC</div><div class="tt">Local ${statusBadge('active').replace('Active','3 secrets')}</div><div class="td">Encrypted on this machine</div></div>
-        <div class="tile"><div class="th" style="color:#FF9900">AWS</div><div class="tt">AWS ${statusBadge('connected')}</div><div class="td">Secrets Manager, via IAM Roles Anywhere</div></div>
+        <div class="tile"><div class="th" style="color:#3fc0dd">LOC</div><div class="tt">Local ${statusBadge('active').replace('Active','2 secrets')}</div><div class="td">slack-bot-token, github-pat — encrypted on this machine</div></div>
+        <div class="tile dim"><div class="th" style="color:#FF9900">AWS</div><div class="tt">AWS ${statusBadge('off')}</div><div class="td">Secrets Manager, via IAM Roles Anywhere</div></div>
         <div class="tile dim"><div class="th">GCP</div><div class="tt">GCP ${statusBadge('soon')}</div><div class="td">Secret Manager</div></div>
       </div>`,
   },
   {
     nav: 'Traffic',
     render: () => `
-      ${pageHead('traffic', 'Traffic', 'One row per policy decision a gateway made.')}
+      ${pageHead('traffic', 'Traffic', 'One row per policy decision a gateway made — secret access is a second, independent check.')}
       <div class="tablewrap"><table>
-        <thead><tr><th>Agent</th><th>Host</th><th>Decision</th><th>Reason</th></tr></thead>
+        <thead><tr><th>Agent</th><th>Host</th><th>Decision</th><th>Secret</th><th>Reason</th></tr></thead>
         <tbody>
-          <tr><td class="tname">checkout-bot</td><td class="tmuted">api.stripe.com</td><td>${statusBadge('allow')}</td><td class="tfaint">matched allow-openai-agents</td></tr>
-          <tr><td class="tname">web-scraper</td><td class="tmuted">unknown-domain.xyz</td><td>${statusBadge('deny')}</td><td class="tfaint">no matching allow rule</td></tr>
-          <tr><td class="tname">slack-notifier</td><td class="tmuted">hooks.slack.com</td><td>${statusBadge('allow')}</td><td class="tfaint">matched secrets-injection-slack</td></tr>
-          <tr><td class="tname">deploy-agent</td><td class="tmuted">github.com</td><td>${statusBadge('allow')}</td><td class="tfaint">matched deploy-agent-scope</td></tr>
-          <tr><td class="tname">data-sync</td><td class="tmuted">internal-metrics.local</td><td>${statusBadge('deny')}</td><td class="tfaint">host not in target list</td></tr>
+          <tr><td class="tname">demo-agent-1</td><td class="tmuted">slack.com</td><td>${statusBadge('allow')}</td><td>${statusBadge('authorized')}</td><td class="tfaint">demo-secrets-policy: slack-bot-token authorized</td></tr>
+          <tr><td class="tname">demo-agent-3</td><td class="tmuted">slack.com</td><td>${statusBadge('allow')}</td><td>${statusBadge('secretdenied')}</td><td class="tfaint">demo-secrets-policy: not named for slack-bot-token</td></tr>
+          <tr><td class="tname">demo-agent-2</td><td class="tmuted">api.github.com</td><td>${statusBadge('allow')}</td><td>${statusBadge('authorized')}</td><td class="tfaint">demo-secrets-policy: github-pat authorized</td></tr>
+          <tr><td class="tname">demo-agent-3</td><td class="tmuted">evil-exfil-host.example</td><td>${statusBadge('deny')}</td><td>${statusBadge('none')}</td><td class="tfaint">destination not in agent's allowed policy</td></tr>
+          <tr><td class="tname">demo-agent-1</td><td class="tmuted">api.openai.com</td><td>${statusBadge('allow')}</td><td>${statusBadge('none')}</td><td class="tfaint">matched default-allow-all-acme-corp</td></tr>
         </tbody></table></div>`,
   },
   {
@@ -478,9 +470,7 @@ const SCENES = [
       <div class="tablewrap"><table>
         <thead><tr><th>Org</th><th>Teams</th><th>Users</th><th></th></tr></thead>
         <tbody>
-          <tr><td class="tname">Acme Corp</td><td class="tmuted">2</td><td class="tmuted">4</td><td class="tfaint">Manage</td></tr>
-          <tr><td class="tname">Globex Industries</td><td class="tmuted">1</td><td class="tmuted">1</td><td class="tfaint">Manage</td></tr>
-          <tr><td class="tname">Initech</td><td class="tmuted">0</td><td class="tmuted">0</td><td class="tfaint">Manage</td></tr>
+          <tr><td class="tname">acme-corp</td><td class="tmuted">2</td><td class="tmuted">3</td><td class="tfaint">Manage</td></tr>
         </tbody></table></div>`,
   },
   {
@@ -491,12 +481,9 @@ const SCENES = [
       <div class="tablewrap"><table>
         <thead><tr><th>User</th><th>Org</th><th>Team</th><th>Role</th></tr></thead>
         <tbody>
-          <tr><td class="tname">sarah</td><td class="tmuted">—</td><td class="tmuted">—</td><td class="tfaint">super_admin</td></tr>
-          <tr><td class="tname">alice</td><td class="tmuted">Acme Corp</td><td class="tmuted">—</td><td class="tfaint">org_admin</td></tr>
-          <tr><td class="tname">ben</td><td class="tmuted">Globex Industries</td><td class="tmuted">—</td><td class="tfaint">org_admin</td></tr>
-          <tr><td class="tname">priya</td><td class="tmuted">Acme Corp</td><td class="tmuted">Platform</td><td class="tfaint">team_admin</td></tr>
-          <tr><td class="tname">diego</td><td class="tmuted">Acme Corp</td><td class="tmuted">Data</td><td class="tfaint">member</td></tr>
-          <tr><td class="tname">mika</td><td class="tmuted">Globex Industries</td><td class="tmuted">Growth</td><td class="tfaint">member</td></tr>
+          <tr><td class="tname">admin</td><td class="tmuted">—</td><td class="tmuted">—</td><td class="tfaint">super_admin</td></tr>
+          <tr><td class="tname">priya</td><td class="tmuted">acme-corp</td><td class="tmuted">platform-team</td><td class="tfaint">team_admin</td></tr>
+          <tr><td class="tname">marcus</td><td class="tmuted">acme-corp</td><td class="tmuted">growth-team</td><td class="tfaint">member</td></tr>
         </tbody></table></div>`,
   },
   {
@@ -504,10 +491,10 @@ const SCENES = [
     render: () => `
       ${pageHead('invites', 'Invites', 'Registration is invite-only — every invite carries a mandatory org.')}
       <div class="tablewrap"><table>
-        <thead><tr><th>Org</th><th>Team</th><th>Role</th><th>Status</th><th>Expires</th></tr></thead>
+        <thead><tr><th>Org</th><th>Team</th><th>Role</th><th>Status</th><th></th></tr></thead>
         <tbody>
-          <tr><td class="tname">Initech</td><td class="tmuted">—</td><td class="tmuted">org_admin</td><td>${statusBadge('pending')}</td><td class="tfaint">6d</td></tr>
-          <tr><td class="tname">Globex Industries</td><td class="tmuted">Growth</td><td class="tmuted">member</td><td>${statusBadge('pending')}</td><td class="tfaint">6d</td></tr>
+          <tr><td class="tname">acme-corp</td><td class="tmuted">platform-team</td><td class="tmuted">team_admin</td><td>${statusBadge('redeemed')}</td><td class="tfaint">now priya</td></tr>
+          <tr><td class="tname">acme-corp</td><td class="tmuted">growth-team</td><td class="tmuted">member</td><td>${statusBadge('redeemed')}</td><td class="tfaint">now marcus</td></tr>
         </tbody></table></div>`,
   },
 ]
